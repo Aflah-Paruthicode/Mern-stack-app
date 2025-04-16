@@ -2,8 +2,8 @@ import { Button, Container, Text, Flex, Link, HStack } from '@chakra-ui/react'
 import { Moon, SquarePlus, Sun } from 'lucide-react';
 import { useColorMode, useColorModeValue } from './ui/color-mode';
 
-const navbar = () => {
-  const { colorMode, toggleColorMode } = useColorMode()
+const Navbar = () => {
+  const { colorMode, toggleColorMode } = useColorMode() 
   return <Container maxW={'1140px'} px={'4'} > 
 
   <Flex height={'16'} alignItems={"center"} justifyContent={"space-between"} flexDir={{base:"column",sm:"row"}} >
@@ -29,4 +29,4 @@ const navbar = () => {
   
 }
 
-export default navbar
+export default Navbar
