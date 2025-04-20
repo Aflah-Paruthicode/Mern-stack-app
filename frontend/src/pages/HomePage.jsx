@@ -1,11 +1,13 @@
+import ProductCard from "../components/ProductCard.jsx"
 import { userProductStore } from "../store/product.js"
-import { Container, SimpleGrid, Text, VStack } from "@chakra-ui/react"
+import { Box, Container, SimpleGrid, Text, VStack } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { Link } from "react-router-dom"
 
-const homePage = () => {
 
-  const { fetchProduct, products } = userProductStore()
+const HomePage = () => {
+
+  const { fetchProduct, products } =  userProductStore()
 
   useEffect(() => {
     fetchProduct()
@@ -14,40 +16,40 @@ const homePage = () => {
 
   return (
     <Container maxW='container.xl' py={12} >
-      <VStack spacing={8}>
+      <VStack spaceY={12}>
         <Text
-        fontSize={"30"}
+        fontSize={"2xl"}
         fontWeight={'bold'}
-        bgGradient={'linear(to-r,cyan.400,blue.500)'}
+        bgGradient='to-r'
+        gradientFrom="cyan.400"
+        gradientTo="blue.500"
         bgClip={'text'}
         textAlign={'center'}>
+        
           Current Products
         </Text>
 
-        <SimpleGrid
-            column={{
-              base:1,
-              md:2,
-              lg:3
-            }}
-            spacing={10}
-            w={'full'}
-            >
-              { products}
+        <SimpleGrid columns={2} gap={'40px'} w={'full'}  >
+            {products.map((product) => {
+              return <Box key={product._id}>
+                <ProductCard product={product} />
+              </Box>
+              })}
         </SimpleGrid>
 
-        <Text fontSize={'xl'} textAlign={'center'} fontWeight={'bold'} color={'gray.500'} >
-          No products found {" "} 
-          <Link to={'/create'} >
-          <Text as={'span'} color={'blue.500'} _hover={{textDecoration:"underline"}} >
-            Create a product
-          </Text>
-          </Link>
-        </Text>
-
+        {products.length === 0 && (
+            <Text fontSize={'xl'} textAlign={'center'} fontWeight={'bold'} color={'gray.500'}>
+              No products found{" "}
+              <Link to={'/create'}>
+                <Text as={'span'} color={'blue.500'} _hover={{ textDecoration: "underline" }}>
+                  Create a product
+                </Text>
+              </Link>
+            </Text>
+          )}
       </VStack>
     </Container>
   )
 }
 
-export default homePage
+export default HomePage
