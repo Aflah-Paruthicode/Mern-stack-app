@@ -1,12 +1,26 @@
 import Product from "../models/products.model.js";
+import Admin from "../models/admin.model.js";
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+
+export const adminLogin = async (req, res) => {
+  const admin = await Admin.findOne();
+  const { email, password } = req.body;
+
+  if (email !== admin.email || password !== admin.password) {
+    return res.status(401).json({ message: "Invalid credentials" });
+  }
+
+  const token = jwt.sign({ role: "admin" }, process.env.JWT_SECRET, { expiresIn: "2h" });
+
+  res.json({ token });
+};
 
 export const getProducts = async (req, res) => {
   try {
     const products = await Product.find({});
     res.status(200).json({ success: true, data: products });
   } catch (error) {
-    console.log("error in getting products");
     res.status(404).json({ success: false, message: "server error" });
   }
 };
@@ -24,8 +38,6 @@ export const addProduct = async (req, res) => {
     await newProduct.save();
     res.status(201).json({ success: true, data: newProduct });
   } catch (error) {
-    console.error("Error in create product : ", error.message);
-    console.log("error in adding product");
     res.status(500).json({ success: false, message: "server error" });
   }
 };
@@ -59,7 +71,6 @@ export const deleteProduct = async (req, res) => {
     await Product.findByIdAndDelete(id);
     res.status(200).json({ success: true, message: "product deleted" });
   } catch (error) {
-    console.log("error in deleting product : ", error.message);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
