@@ -6,21 +6,22 @@ import Navbar from "./components/Navbar";
 import { useColorModeValue } from "./components/ui/color-mode";
 import UpdatePage from "./pages/UpdatePage";
 import { useEffect, useState } from "react";
-import { useGetProducts } from "./hooks/useGetProducts";
+import { getProducts } from "./utils/getProducts";
+import LoginPage from "./pages/LoginPage";
 
-function App() {  
-  
+function App() {
   let [products, setProducts] = useState([]);
-  
-    useEffect(() => {
-      useGetProducts(setProducts);
-    }, []);
+
+  useEffect(() => {
+    getProducts(setProducts);
+  }, []);
 
   return (
     <>
       <Box minH={"100vh"} bg={useColorModeValue("gray.100", "gray.900")}>
         <Navbar />
         <Routes>
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<HomePage products={products} setProducts={setProducts} />} />
           <Route path="/create" element={<CreatePage setProducts={setProducts} />} />
           <Route path="/update/:id" element={<UpdatePage products={products} setProducts={setProducts} />} />

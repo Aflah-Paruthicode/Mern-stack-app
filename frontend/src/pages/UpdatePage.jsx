@@ -1,12 +1,8 @@
 import { Button, Field, Input, Stack } from "@chakra-ui/react";
-import { baseUrl } from "../utils/constants";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useValidateProduct } from "../hooks/useValidateProduct";
-
 import React from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { useGetProducts } from "../hooks/useGetProducts";
+import { useNavigate, useParams } from "react-router-dom";
+import { updateProduct } from "../utils/updateProduct";
 
 const UpdatePage = ({ products, setProducts }) => {
   const { id } = useParams();
@@ -27,36 +23,17 @@ const UpdatePage = ({ products, setProducts }) => {
     }
   }, [product]);
 
-  const editProduct = async (e) => {
-    e.preventDefault();
-
-    const error = useValidateProduct(name, price, description, imageUrl);
-    if (error) return setErr(error);
-
-    try {
-      const res = await axios.put(baseUrl + "/api/products/" + id, {
-        name,
-        price,
-        description,
-        image: imageUrl,
-      });
-      if (!res.data.success) setErr(res.data.message);
-      else {
-        useGetProducts(setProducts);
-        navigate("/");
-      }
-    } catch (error) {
-      const message = error.response?.data?.message || "Something went wrong";
-      setErr(message);
-    }
-  };
-
   return (
     <div className="">
-      <form onSubmit={editProduct}>
-        <Stack gap="4" align="flex-end" width={{ base: "80%", sm: "300px", md: "400px" }} mx="auto">
+      <form
+        onSubmit={async (e) => {
+          let success = await updateProduct(e, id, name, price, description, imageUrl, setErr, setProducts);
+          if (success == true) navigate("/");
+        }}
+      >
+        <Stack gap="4" align="flex-end" width={{ base: "80%", sm: "300px", md: "400px" }} padding={"5"} bgColor={"Background"} borderRadius={"2xl"} mx="auto">
           <div style={{ justifyContent: "space-between", fontSize: "25px", display: "flex", width: "100%" }}>
-            <Button variant="outline" onClick={() => navigate('/')}>
+            <Button variant="outline" onClick={() => navigate("/")}>
               back
             </Button>
           </div>

@@ -1,10 +1,7 @@
 import { Button, Field, Input, Stack } from "@chakra-ui/react";
-import { baseUrl } from "../utils/constants";
 import { useState } from "react";
-import axios from "axios";
-import { useValidateProduct } from "../hooks/useValidateProduct";
-import { useGetProducts } from "../hooks/useGetProducts";
 import { useNavigate } from "react-router-dom";
+import { addProduct } from "../utils/addProduct";
 
 const CreatePage = ({ setProducts }) => {
   const [name, setName] = useState("");
@@ -14,33 +11,14 @@ const CreatePage = ({ setProducts }) => {
   const [err, setErr] = useState("");
   const navigate = useNavigate();
 
-  const addProduct = async (e) => {
-    e.preventDefault();
-
-    const error = useValidateProduct(name, price, description, imageUrl);
-    if (error) setErr(error);
-
-    try {
-      const res = await axios.post(baseUrl + "/api/products", {
-        name,
-        price,
-        description,
-        image: imageUrl,
-      });
-      if (!res.data.success) setErr(res.data.message);
-      else {
-        useGetProducts(setProducts);
-        navigate("/");
-      }
-    } catch (error) {
-      const message = error.response?.data?.message || "Something went wrong";
-      setErr(message);
-    }
-  };
-
   return (
     <div className="">
-      <form onSubmit={addProduct}>
+      <form
+        onSubmit={async (e) => {
+          let success = await addProduct(e, name, price, description, imageUrl, setProducts, setErr);
+          if (success == true) navigate("/");
+        }}
+      >
         <Stack gap="4" align="flex-end" width={{ base: "80%", sm: "300px", md: "400px" }} mx="auto">
           <div style={{ justifyContent: "space-between", fontSize: "25px", display: "flex", width: "100%" }}>
             <Button variant="outline" onClick={() => navigate("/")}>

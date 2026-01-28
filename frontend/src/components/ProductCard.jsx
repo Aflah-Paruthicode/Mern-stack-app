@@ -1,21 +1,11 @@
 import { Avatar, Button, Card } from "@chakra-ui/react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { baseUrl } from "../utils/constants";
-import { useGetProducts } from "../hooks/useGetProducts";
+import { useState } from "react";
+import { deleteProduct } from "../utils/deleteProduct";
 
-const ProductCard = ({ product, setProducts }) => {
+const ProductCard = ({ product, setProducts = null }) => {
   const navigate = useNavigate();
-
-  const handleDelete = async () => {
-    try {
-      const res = await axios.delete(baseUrl + "/api/products/" + product._id);
-        useGetProducts(setProducts);
-        navigate("/");
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const [err, setErr] = useState("");
 
   return (
     <Card.Root width="320px">
@@ -24,6 +14,7 @@ const ProductCard = ({ product, setProducts }) => {
           <Avatar.Image src={product.image} />
           <Avatar.Fallback name="Techy store" />
         </Avatar.Root>
+        <p style={{ width: "100%", textAlign: "start", color: "red", fontWeight: "400" }}>{err && err}</p>
         <Card.Title mt="2">{product.name}</Card.Title>
         <Card.Title>{product.price}</Card.Title>
         <Card.Description>{product.description}</Card.Description>
@@ -32,7 +23,14 @@ const ProductCard = ({ product, setProducts }) => {
         <Button variant="outline">
           <Link to={"/update/" + product._id}>Update</Link>
         </Button>
-        <Button onClick={handleDelete}>Delete</Button>
+        <Button
+          onClick={async () => {
+            let success = await deleteProduct(product._id, setProducts, setErr);
+            if (success == true) navigate("/");
+          }}
+        >
+          Delete
+        </Button>
       </Card.Footer>
     </Card.Root>
   );
