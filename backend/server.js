@@ -17,7 +17,7 @@ app.use(
   })
 );
 
-app.use("/api/products", productRoutes);
+app.use("/api/products", productRoutes);   
 
 app.listen(port, () => {
   connectDb();
